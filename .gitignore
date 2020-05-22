@@ -1,0 +1,9 @@
+# Ignore per-user Visual Studio editor files
+
+*.csproj.user
+/.vs
+
+# Ignore build output folders
+
+/*/bin
+/*/obj

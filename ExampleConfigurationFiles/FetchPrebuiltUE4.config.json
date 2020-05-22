@@ -1,0 +1,7 @@
+{
+	"ClientId" : "<client ID, for user authentication>",
+	"ClientSecret" : "<client secret, for user authentication>",
+	"ChunkStoreURI" : "gs://<bucket name>",
+	"IndexStoreURI" : "gs://<bucket name>",
+	"UE4Folder" : "<folder within index store where .caidx files are stored>"
+}
