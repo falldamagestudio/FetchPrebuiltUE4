@@ -16,9 +16,14 @@ namespace FetchPrebuiltUE4
         {
             public OAuth.ClientID ClientID;
             public OAuth.ClientSecret ClientSecret;
-            public string ChunkStoreURI;
-            public string IndexStoreURI;
+            public Longtail.BlockStorageURI BlockStorageURI;
+            public Longtail.VersionIndexStorageURI VersionIndexStorageURI;
             public string UE4Folder;
+        }
+
+        private static Longtail.VersionIndexURI PackageNameToURI(Longtail.VersionIndexStorageURI versionIndexStorageURI, string packageName)
+        {
+            return new Longtail.VersionIndexURI($"{versionIndexStorageURI}/versions/{packageName}.lvi");
         }
 
         private static Config config;
@@ -81,11 +86,7 @@ namespace FetchPrebuiltUE4
         {
             await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
 
-            Desync desync = new Desync();
-
-            string caidxName = $"{config.IndexStoreURI}/{package}.caidx";
-
-            if (!await desync.TarToGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, new Desync.BucketURI(config.ChunkStoreURI), folder, caidxName))
+            if (!await Longtail.UpsyncToGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
             {
                 Console.WriteLine("Tar operation failed.");
                 return 1;
@@ -98,11 +99,7 @@ namespace FetchPrebuiltUE4
         {
             await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
 
-            Desync desync = new Desync();
-
-            string caidxName = $"{config.IndexStoreURI}/{package}.caidx";
-
-            if (!await desync.UntarFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, new Desync.BucketURI(config.ChunkStoreURI), folder, caidxName))
+            if (!await Longtail.DownsyncFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
             {
                 Console.WriteLine("Untar operation failed.");
                 return 1;
@@ -160,11 +157,7 @@ namespace FetchPrebuiltUE4
 
                 await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
 
-                Desync desync = new Desync();
-
-                string caidxName = $"{config.IndexStoreURI}/{desiredUE4Version.BuildId}.caidx";
-
-                if (!await desync.UntarFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, new Desync.BucketURI(config.ChunkStoreURI), Path.GetFullPath(config.UE4Folder), caidxName))
+                if (!await Longtail.DownsyncFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, Path.GetFullPath(config.UE4Folder), PackageNameToURI(config.VersionIndexStorageURI, desiredUE4Version.BuildId)))
                 {
                     Console.WriteLine("Download failed.");
                     return 1;

@@ -403,7 +403,7 @@ namespace DistributionTools
 
         private static async Task<OAuth.RefreshToken> RefreshLoginInteractive(ApplicationOAuthConfiguration applicationOAuthConfiguration)
         {
-            string[] scopes = new string[] { "openid", "profile", "https://www.googleapis.com/auth/devstorage.read_write" };
+            string[] scopes = new string[] { "openid", "profile", "https://www.googleapis.com/auth/devstorage.full_control" };
 
             RedirectURI redirectURI;
             HttpListener http;
