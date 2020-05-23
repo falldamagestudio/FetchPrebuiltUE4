@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FetchPrebuiltUE4Test.cs" />
+    <Compile Include="AuthCommands.cs" />
+    <Compile Include="UploadAndDownloadToLocalStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,4 +64,10 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)\Tools\longtail.exe" "$(TargetDir)"
+xcopy /y /i /s "$(SolutionDir)\FetchPrebuiltUE4Test\TestPackageSource" "$(TargetDir)\TestPackageSource"
+xcopy /y /i /s "$(SolutionDir)\FetchPrebuiltUE4Test\LocalStoreSource" "$(TargetDir)\LocalStoreSource"
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

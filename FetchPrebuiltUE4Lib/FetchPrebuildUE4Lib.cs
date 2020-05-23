@@ -93,14 +93,54 @@ namespace FetchPrebuiltUE4Lib
             return await result;
         }
 
+        private async Task<int> UpsyncWithAuthentication(string folder, string package)
+        {
+            if (((string)config.BlockStorageURI).StartsWith("gs://"))
+            {
+                await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
+
+                if (!await Longtail.UpsyncToGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
+                {
+                    Console.WriteLine("Tar operation failed.");
+                    return 1;
+                }
+            }
+            else
+            {
+                if (!await Longtail.UpsyncToLocalStore(config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
+                {
+                    Console.WriteLine("Tar operation failed.");
+                    return 1;
+                }
+            }
+
+            return 0;
+        }
+
         private async Task<int> UploadPackage(string folder, string package)
         {
-            await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
+            return await UpsyncWithAuthentication(folder, package);
+        }
 
-            if (!await Longtail.UpsyncToGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
+        private async Task<int> DownsyncWithAuthentication(string folder, string package)
+        {
+            if (((string)config.BlockStorageURI).StartsWith("gs://"))
             {
-                Console.WriteLine("Tar operation failed.");
-                return 1;
+                await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
+
+                if (!await Longtail.DownsyncFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
+                {
+                    Console.WriteLine("Untar operation failed.");
+                    return 1;
+                }
+            }
+            else
+            {
+                if (!await Longtail.DownsyncFromLocalStore(config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
+                {
+                    Console.WriteLine("Untar operation failed.");
+                    return 1;
+                }
             }
 
             return 0;
@@ -108,15 +148,7 @@ namespace FetchPrebuiltUE4Lib
 
         private async Task<int> DownloadPackage(string folder, string package)
         {
-            await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
-
-            if (!await Longtail.DownsyncFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, folder, PackageNameToURI(config.VersionIndexStorageURI, package)))
-            {
-                Console.WriteLine("Untar operation failed.");
-                return 1;
-            }
-
-            return 0;
+            return await DownsyncWithAuthentication(folder, package);
         }
 
         private struct UE4Version
@@ -166,18 +198,18 @@ namespace FetchPrebuiltUE4Lib
             {
                 Console.WriteLine($"Installing UE4 version {desiredUE4Version.BuildId}...");
 
-                await GoogleOAuthFlow.RefreshUserApplicationDefaultCredentials(applicationOAuthConfiguration);
+                int result = await DownsyncWithAuthentication(Path.GetFullPath(config.UE4Folder), desiredUE4Version.BuildId);
 
-                if (!await Longtail.DownsyncFromGSBucket(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile, config.BlockStorageURI, Path.GetFullPath(config.UE4Folder), PackageNameToURI(config.VersionIndexStorageURI, desiredUE4Version.BuildId)))
-                {
-                    Console.WriteLine("Download failed.");
-                    return 1;
-                }
-                else
+                if (result == 0)
                 {
                     WriteUE4Version(desiredUE4Version, installedUE4VersionFile);
                     Console.WriteLine($"UE4 version {desiredUE4Version.BuildId} has been installed");
                     return 0;
+                }
+                else
+                {
+                    Console.WriteLine("Download failed.");
+                    return result;
                 }
             }
             else

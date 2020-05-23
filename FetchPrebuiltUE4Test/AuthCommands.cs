@@ -3,9 +3,11 @@ using Xunit;
 
 namespace FetchPrebuiltUE4Test
 {
-    public class FetchPrebuiltUE4Test
+    public class AuthCommands
     {
-        private void WriteConfigFile()
+        private const string CredentialsFile = "application-default-credentials.json";
+
+        private static void WriteConfigFile()
         {
             const string content =
             @"{
@@ -26,15 +28,13 @@ namespace FetchPrebuiltUE4Test
 
             WriteConfigFile();
 
-            const string credentialsFile = "application-default-credentials.json";
-
-            System.IO.File.WriteAllText(credentialsFile, "hello");
+            System.IO.File.WriteAllText(CredentialsFile, "hello");
 
             Task<int> result = lib.Run(new string[] { "clear-auth" });
             result.Wait();
             Assert.Equal(0, result.Result);
 
-            Assert.False(System.IO.File.Exists(credentialsFile));
+            Assert.False(System.IO.File.Exists(CredentialsFile));
         }
 
         [Fact]
@@ -44,16 +44,14 @@ namespace FetchPrebuiltUE4Test
 
             WriteConfigFile();
 
-            const string credentialsFile = "application-default-credentials.json";
-
-            if (System.IO.File.Exists(credentialsFile))
-                System.IO.File.Delete(credentialsFile);
+            if (System.IO.File.Exists(CredentialsFile))
+                System.IO.File.Delete(CredentialsFile);
 
             Task<int> result = lib.Run(new string[] { "clear-auth" });
             result.Wait();
             Assert.Equal(0, result.Result);
 
-            Assert.False(System.IO.File.Exists(credentialsFile));
+            Assert.False(System.IO.File.Exists(CredentialsFile));
         }
     }
 }
