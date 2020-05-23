@@ -52,7 +52,7 @@ namespace FetchPrebuiltUE4Lib
             };
         }
 
-        public RootCommand CreateCommand()
+        private RootCommand CreateCommand()
         {
             RootCommand rootCommand = new RootCommand();
 
