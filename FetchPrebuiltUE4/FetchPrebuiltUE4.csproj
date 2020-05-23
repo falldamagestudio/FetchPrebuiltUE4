@@ -50,21 +50,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DistributionTools\DistributionTools.csproj">
-      <Project>{d6c30eef-54c3-4745-8b30-1aafaa56280d}</Project>
-      <Name>DistributionTools</Name>
+    <ProjectReference Include="..\FetchPrebuiltUE4Lib\FetchPrebuiltUE4Lib.csproj">
+      <Project>{2c0c7a1d-7b45-4115-ae54-7f3a4630ba3a}</Project>
+      <Name>FetchPrebuiltUE4Lib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.CommandLine">
-      <Version>2.0.0-beta1.20158.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Interactive.Async">
-      <Version>3.2.0</Version>
-    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
