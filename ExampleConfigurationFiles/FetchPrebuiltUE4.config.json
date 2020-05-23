@@ -1,7 +1,7 @@
 {
 	"ClientId" : "<client ID, for user authentication>",
 	"ClientSecret" : "<client secret, for user authentication>",
-	"ChunkStoreURI" : "gs://<bucket name>",
-	"IndexStoreURI" : "gs://<bucket name>",
-	"UE4Folder" : "<folder within index store where .caidx files are stored>"
+	"BlockStorageURI": "<location where blocks will be stored>",
+	"VersionIndexStorageURI": "<location within which .lvi files will be created>",
+	"UE4Folder" : "<folder where UE4 is supposed to get downloaded to>"
 }
