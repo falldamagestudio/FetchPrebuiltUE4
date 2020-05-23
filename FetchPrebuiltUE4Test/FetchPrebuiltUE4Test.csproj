@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthCommands.cs" />
+    <Compile Include="UpdateVersionAgainstLocalStore.cs" />
     <Compile Include="UploadAndDownloadToLocalStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -151,12 +151,12 @@ namespace FetchPrebuiltUE4Lib
             return await DownsyncWithAuthentication(folder, package);
         }
 
-        private struct UE4Version
+        public struct UE4Version
         {
             public string BuildId;
         }
 
-        private static UE4Version ReadUE4Version(string versionFile)
+        public static UE4Version ReadUE4Version(string versionFile)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
 
@@ -175,7 +175,7 @@ namespace FetchPrebuiltUE4Lib
             }
         }
 
-        private static void WriteUE4Version(UE4Version version, string versionFile)
+        public static void WriteUE4Version(UE4Version version, string versionFile)
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
 
