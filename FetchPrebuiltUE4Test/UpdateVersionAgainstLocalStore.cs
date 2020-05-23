@@ -65,7 +65,7 @@ namespace FetchPrebuiltUE4Test
         {
             FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
 
-            WriteConfigFile(LocalStore, TestPackage);
+            WriteConfigFile(LocalStoreSource, TestPackage);
             WriteDesiredVersion(PackageName);
             WriteInstalledVersion("");
 
@@ -87,7 +87,7 @@ namespace FetchPrebuiltUE4Test
         {
             FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
 
-            WriteConfigFile(LocalStore, TestPackage);
+            WriteConfigFile(LocalStoreSource, TestPackage);
             WriteDesiredVersion(PackageName);
             WriteInstalledVersion(PackageName);
 
