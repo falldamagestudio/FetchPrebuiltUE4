@@ -78,4 +78,4 @@ jobs:
         # TODO: declare a body with changenotes for the release
         token: ${{ secrets.GITHUB_TOKEN }}
         allowUpdates: true
-        artifacts: "FetchPrebuiltUE4-DotNetCore2.0-${{ GITHUB_REF#refs/tags/releases/ }}.zip,FetchPrebuiltUE4-DotNet4.7.2-${{ GITHUB_REF#refs/tags/releases/ }}.zip"
+        artifacts: "FetchPrebuiltUE4-DotNetCore2.0-${ GITHUB_REF#refs/tags/releases/ }.zip,FetchPrebuiltUE4-DotNet4.7.2-${ GITHUB_REF#refs/tags/releases/ }.zip"
