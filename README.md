@@ -17,6 +17,14 @@ This wrapper helps users with authentication if files are kept in Google Cloud S
 
 [LongtailLib](https://github.com/DanEngelbrecht/LongtailLib/) is a C# wrapper library for longtail.
 
+# Commands
+
+- `clear-auth` removes any local credentials, if present.
+- `create-user-auth` initiates authentication flow for end-user behaviour.
+- `upload-package` uploads a package to Longtail storage.
+- `download-package` downloads a package from Longtail storage. Note that only differences will be downloaded.
+- `update-local-ue4-version` updates the contents of a local UE4 installation folder. The desired version is specified in `DesiredUE4Version.json` and the currently-installed version is stored in `InstalledUE4Version.json`. If those versions match, the tool will assume that the downloaded files are intact, and will not re-download. If the versions do not match, the tool will scan the local installation and download any files necessary.
+
 # Typical usage
 
 ## Google Cloud setup
@@ -30,12 +38,12 @@ This wrapper helps users with authentication if files are kept in Google Cloud S
 ## FetchPrebuiltUE4 authentication configuration
 
 - If you want to use a Service Account, then download JSON credentials and put them into a file called `default-application-credentials.json` next to `FetchPrebuiltUE4`.
-- Otherwise, you will be prompted to log in using a regular user account the first time that you access Google Cloud via `FetchPrebuiltUE4`.
+- Otherwise, configure FetchPrebuiltUE4 to use a regular user account: `FetchPrebuiltUE4 create-user-auth` and follow instructions. You will be prompted to authenticate via a Google account.
 
 ## Build & upload UE4
 
 - Build UE4, for example by using BuildGraph: `Engine\Build\BatchFiles\RunUAT.bat BuildGraph -Script="Engine/Build/InstalledEngineBuild.xml" -Target="Make Installed Build Win64" -set:HostPlatformOnly=true -set:WithServer=true -set:WithDDC=false -set:VS2019=true`
-- Upload UE4 build to storage, `FetchPrebuiltUE4 --folder <UE4 engine folder> --package <version identification of your UE4 build>`.
+- Upload UE4 build to storage, `FetchPrebuiltUE4 upload-package --folder <UE4 engine folder> --package <version identification of your UE4 build>`.
 - Create a `DesiredUE4Version.json` file next to `FetchPrebuiltUE4`, with the version identification of your UE4 build.
 
 ## Add FetchPrebuiltUE4 to Unreal project
