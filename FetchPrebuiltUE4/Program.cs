@@ -6,8 +6,7 @@ namespace FetchPrebuiltUE4
     {
         static int Main(string[] args)
         {
-            FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
-            Task<int> result = lib.Run(args);
+            Task<int> result = FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib.Run(args);
             result.Wait();
             return result.Result;
         }
