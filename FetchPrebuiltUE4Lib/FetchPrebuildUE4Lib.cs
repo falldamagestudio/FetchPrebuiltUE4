@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FetchPrebuiltUE4Lib
 {
-    public class FetchPrebuiltUE4Lib
+    public static class FetchPrebuiltUE4Lib
     {
-        private GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration;
+        private static readonly GoogleOAuthFlow.ApplicationDefaultCredentialsFile ApplicationDefaultCredentialsFile = new GoogleOAuthFlow.ApplicationDefaultCredentialsFile("application-default-credentials.json");
 
         private struct Config
         {
@@ -21,14 +21,12 @@ namespace FetchPrebuiltUE4Lib
             public string UE4Folder;
         }
 
-        private Longtail.VersionIndexURI PackageNameToURI(Longtail.VersionIndexStorageURI versionIndexStorageURI, string packageName)
+        private static Longtail.VersionIndexURI PackageNameToURI(Longtail.VersionIndexStorageURI versionIndexStorageURI, string packageName)
         {
             return new Longtail.VersionIndexURI($"{versionIndexStorageURI}/versions/{packageName}.lvi");
         }
 
-        private Config config;
-
-        private Config ReadConfig()
+        private static Config ReadConfig()
         {
             string configFile = "FetchPrebuiltUE4.config.json";
 
@@ -41,18 +39,18 @@ namespace FetchPrebuiltUE4Lib
             }
         }
 
-        private void Initialize()
+        private static void Initialize(out Config config, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration)
         {
             config = ReadConfig();
             applicationOAuthConfiguration = new GoogleOAuthFlow.ApplicationOAuthConfiguration
             {
                 ClientID = config.ClientID,
                 ClientSecret = config.ClientSecret,
-                ApplicationDefaultCredentialsFile = new GoogleOAuthFlow.ApplicationDefaultCredentialsFile("application-default-credentials.json")
+                ApplicationDefaultCredentialsFile = ApplicationDefaultCredentialsFile
             };
         }
 
-        private RootCommand CreateCommand()
+        private static RootCommand CreateCommand()
         {
             RootCommand rootCommand = new RootCommand();
 
@@ -83,7 +81,7 @@ namespace FetchPrebuiltUE4Lib
             return rootCommand;
         }
 
-        public async Task<int> Run(string[] args)
+        public static async Task<int> Run(string[] args)
         {
             RootCommand rootCommand = CreateCommand();
 
@@ -91,7 +89,7 @@ namespace FetchPrebuiltUE4Lib
             return await result;
         }
 
-        private async Task<int> UpsyncWithAuthentication(string folder, string package)
+        private static async Task<int> UpsyncWithAuthentication(Config config, GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration, string folder, string package)
         {
             if (((string)config.BlockStorageURI).StartsWith("gs://"))
             {
@@ -115,14 +113,14 @@ namespace FetchPrebuiltUE4Lib
             return 0;
         }
 
-        private async Task<int> UploadPackage(string folder, string package)
+        private static async Task<int> UploadPackage(string folder, string package)
         {
-            Initialize();
+            Initialize(out Config config, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration);
 
-            return await UpsyncWithAuthentication(folder, package);
+            return await UpsyncWithAuthentication(config, applicationOAuthConfiguration, folder, package);
         }
 
-        private async Task<int> DownsyncWithAuthentication(string folder, string package)
+        private static async Task<int> DownsyncWithAuthentication(Config config, GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration, string folder, string package)
         {
             if (((string)config.BlockStorageURI).StartsWith("gs://"))
             {
@@ -146,11 +144,11 @@ namespace FetchPrebuiltUE4Lib
             return 0;
         }
 
-        private async Task<int> DownloadPackage(string folder, string package)
+        private static async Task<int> DownloadPackage(string folder, string package)
         {
-            Initialize();
+            Initialize(out Config config, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration);
 
-            return await DownsyncWithAuthentication(folder, package);
+            return await DownsyncWithAuthentication(config, applicationOAuthConfiguration, folder, package);
         }
 
         public struct UE4Version
@@ -188,9 +186,9 @@ namespace FetchPrebuiltUE4Lib
             }
         }
 
-        private async Task<int> UpdateLocalUE4Version()
+        private static async Task<int> UpdateLocalUE4Version()
         {
-            Initialize();
+            Initialize(out Config config, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration);
 
             const string installedUE4VersionFile = "InstalledUE4Version.json";
             const string desiredUE4VersionFile = "DesiredUE4Version.json";
@@ -202,7 +200,7 @@ namespace FetchPrebuiltUE4Lib
             {
                 Console.WriteLine($"Installing UE4 version {desiredUE4Version.BuildId}...");
 
-                int result = await DownsyncWithAuthentication(Path.GetFullPath(config.UE4Folder), desiredUE4Version.BuildId);
+                int result = await DownsyncWithAuthentication(config, applicationOAuthConfiguration, Path.GetFullPath(config.UE4Folder), desiredUE4Version.BuildId);
 
                 if (result == 0)
                 {
@@ -223,13 +221,15 @@ namespace FetchPrebuiltUE4Lib
             }
         }
 
-        private void ClearAuth()
+        private static void ClearAuth()
         {
-            GoogleOAuthFlow.RemoveApplicationDefaultCredentials(applicationOAuthConfiguration.ApplicationDefaultCredentialsFile);
+            GoogleOAuthFlow.RemoveApplicationDefaultCredentials(ApplicationDefaultCredentialsFile);
         }
 
-        private async Task CreateUserAuth()
+        private static async Task CreateUserAuth()
         {
+            Initialize(out _, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration);
+
             await GoogleOAuthFlow.CreateUserApplicationDefaultCredentials(applicationOAuthConfiguration);
         }
     }

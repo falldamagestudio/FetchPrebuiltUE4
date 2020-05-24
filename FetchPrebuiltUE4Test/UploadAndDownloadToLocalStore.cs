@@ -60,15 +60,13 @@ namespace FetchPrebuiltUE4Test
         [Fact]
         public void TestUpsyncPackageToLocalStore()
         {
-            FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
-
             InitializeLocalStore();
 
             WriteConfigFile(LocalStore);
 
             Assert.False(File.Exists(Path.Combine(new string[] { LocalStore, "versions", $"{PackageName}.lvi" })));
 
-            Task<int> result = lib.Run(new string[] { "upload-package", "--folder", TestPackageSource, "--package", PackageName });
+            Task<int> result = FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib.Run(new string[] { "upload-package", "--folder", TestPackageSource, "--package", PackageName });
             result.Wait();
             Assert.Equal(0, result.Result);
 
@@ -78,15 +76,13 @@ namespace FetchPrebuiltUE4Test
         [Fact]
         public void TestDownsyncPackageFromLocalStore()
         {
-            FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
-
             WriteConfigFile(LocalStoreSource);
 
             InitializeTestPackage();
 
             Assert.False(File.Exists(Path.Combine(new string[] { TestPackage, "hello.txt" })));
 
-            Task<int> result = lib.Run(new string[] { "download-package", "--folder", TestPackage, "--package", PackageName });
+            Task<int> result = FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib.Run(new string[] { "download-package", "--folder", TestPackage, "--package", PackageName });
             result.Wait();
             Assert.Equal(0, result.Result);
 

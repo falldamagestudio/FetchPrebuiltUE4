@@ -63,8 +63,6 @@ namespace FetchPrebuiltUE4Test
         [Fact]
         public void UpdateWithDifferentVersion()
         {
-            FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
-
             WriteConfigFile(LocalStoreSource, TestPackage);
             WriteDesiredVersion(PackageName);
             WriteInstalledVersion("");
@@ -74,7 +72,7 @@ namespace FetchPrebuiltUE4Test
             Assert.False(File.Exists(Path.Combine(new string[] { TestPackage, "hello.txt" })));
             Assert.NotEqual(PackageName, ReadInstalledVersion());
 
-            Task<int> result = lib.Run(new string[] { "update-local-ue4-version" });
+            Task<int> result = FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib.Run(new string[] { "update-local-ue4-version" });
             result.Wait();
             Assert.Equal(0, result.Result);
 
@@ -85,8 +83,6 @@ namespace FetchPrebuiltUE4Test
         [Fact]
         public void UpdateWithSameVersion()
         {
-            FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib lib = new FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib();
-
             WriteConfigFile(LocalStoreSource, TestPackage);
             WriteDesiredVersion(PackageName);
             WriteInstalledVersion(PackageName);
@@ -96,7 +92,7 @@ namespace FetchPrebuiltUE4Test
             Assert.False(File.Exists(Path.Combine(new string[] { TestPackage, "hello.txt" })));
             Assert.Equal(PackageName, ReadInstalledVersion());
 
-            Task<int> result = lib.Run(new string[] { "update-local-ue4-version" });
+            Task<int> result = FetchPrebuiltUE4Lib.FetchPrebuiltUE4Lib.Run(new string[] { "update-local-ue4-version" });
             result.Wait();
             Assert.Equal(0, result.Result);
 
