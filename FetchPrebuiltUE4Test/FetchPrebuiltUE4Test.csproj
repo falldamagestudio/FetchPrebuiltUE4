@@ -1,60 +1,15 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BC2C6FA7-BB42-4B94-BEA0-AD8B149F6F74}</ProjectGuid>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FetchPrebuiltUE4Test</RootNamespace>
-    <AssemblyName>FetchPrebuiltUE4Test</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\FetchPrebuiltUE4Lib\FetchPrebuiltUE4Lib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthCommands.cs" />
-    <Compile Include="UpdateVersionAgainstLocalStore.cs" />
-    <Compile Include="UploadAndDownloadToLocalStore.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FetchPrebuiltUE4Lib\FetchPrebuiltUE4Lib.csproj">
-      <Project>{2c0c7a1d-7b45-4115-ae54-7f3a4630ba3a}</Project>
-      <Name>FetchPrebuiltUE4Lib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="xunit">
       <Version>2.4.1</Version>
     </PackageReference>
@@ -64,11 +19,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)\Tools\longtail.exe" "$(TargetDir)"
-xcopy /y /i /s "$(SolutionDir)\FetchPrebuiltUE4Test\TestPackageSource" "$(TargetDir)\TestPackageSource"
-xcopy /y /i /s "$(SolutionDir)\FetchPrebuiltUE4Test\LocalStoreSource" "$(TargetDir)\LocalStoreSource"
-</PostBuildEvent>
-  </PropertyGroup>
+  <PropertyGroup />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(SolutionDir)Tools\longtail.exe&quot; &quot;$(TargetDir)&quot;&#xD;&#xA;xcopy /y /i /s &quot;$(SolutionDir)FetchPrebuiltUE4Test\TestPackageSource&quot; &quot;$(TargetDir)\TestPackageSource&quot;&#xD;&#xA;xcopy /y /i /s &quot;$(SolutionDir)FetchPrebuiltUE4Test\LocalStoreSource&quot; &quot;$(TargetDir)\LocalStoreSource&quot;&#xD;&#xA;" />
+  </Target>
 </Project>
