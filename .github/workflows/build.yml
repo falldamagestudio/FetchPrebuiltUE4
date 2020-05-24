@@ -73,7 +73,7 @@ jobs:
     - name: Create GitHub release
       uses: ncipollo/release-action@v1
       with:
-        name: ${{ GITHUB_REF#refs/tags/releases/ }}
+        name: ${ GITHUB_REF#refs/tags/releases/ }
         draft: false
         # TODO: declare a body with changenotes for the release
         token: ${{ secrets.GITHUB_TOKEN }}
