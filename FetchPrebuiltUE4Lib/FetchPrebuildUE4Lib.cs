@@ -85,8 +85,6 @@ namespace FetchPrebuiltUE4Lib
 
         public async Task<int> Run(string[] args)
         {
-            Initialize();
-
             RootCommand rootCommand = CreateCommand();
 
             Task<int> result = rootCommand.InvokeAsync(args);
@@ -119,6 +117,8 @@ namespace FetchPrebuiltUE4Lib
 
         private async Task<int> UploadPackage(string folder, string package)
         {
+            Initialize();
+
             return await UpsyncWithAuthentication(folder, package);
         }
 
@@ -148,6 +148,8 @@ namespace FetchPrebuiltUE4Lib
 
         private async Task<int> DownloadPackage(string folder, string package)
         {
+            Initialize();
+
             return await DownsyncWithAuthentication(folder, package);
         }
 
@@ -188,6 +190,8 @@ namespace FetchPrebuiltUE4Lib
 
         private async Task<int> UpdateLocalUE4Version()
         {
+            Initialize();
+
             const string installedUE4VersionFile = "InstalledUE4Version.json";
             const string desiredUE4VersionFile = "DesiredUE4Version.json";
 
