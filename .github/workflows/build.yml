@@ -65,10 +65,10 @@ jobs:
         name: fetchprebuiltue4-net472
 
     - name: Zip .NET Core 2.0 artifacts
-      run: zip -r FetchPrebuiltUE4-DotNetCore2.0-${{ GITHUB_REF#refs/tags/releases/ }}.zip fetchprebuiltue4-netcoreapp2.0
+      run: zip -r FetchPrebuiltUE4-DotNetCore2.0-${ GITHUB_REF#refs/tags/releases/ }.zip fetchprebuiltue4-netcoreapp2.0
 
     - name: Zip .NET Framework 4.7.2 artifacts
-      run: zip -r FetchPrebuiltUE4-DotNet4.7.2-${{ GITHUB_REF#refs/tags/releases/ }}.zip fetchprebuiltue4-net472
+      run: zip -r FetchPrebuiltUE4-DotNet4.7.2-${ GITHUB_REF#refs/tags/releases/ }.zip fetchprebuiltue4-net472
 
     - name: Create GitHub release
       uses: ncipollo/release-action@v1
