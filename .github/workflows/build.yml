@@ -14,13 +14,69 @@ on:
       - '**'
 
 jobs:
-  win32:
+  build:
+
+    name: Build
 
     runs-on: windows-latest
 
     steps:
+
     - uses: actions/checkout@v2
-    - name: build
+
+    - name: Build Debug configuration
       run: dotnet build
-    - name: test
+
+    - name: Run Tests
       run: dotnet test
+
+    - name: Build Release configuration
+      run: dotnet build --configuration Release
+
+    - name: Upload .NET Core 2.0 artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: fetchprebuiltue4-netcoreapp2.0
+        path: FetchPrebuiltUE4/bin/Release/netcoreapp2.0
+
+    - name: Upload .NET Framework 4.7.2 artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: fetchprebuiltue4-net472
+        path: FetchPrebuiltUE4/bin/Release/net472
+
+  release:
+    if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/releases/'))
+
+    name: Release
+    
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Download .NET Core 2.0 artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: fetchprebuiltue4-netcoreapp2.0
+
+    - name: Download .NET Framework 4.7.2 artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: fetchprebuiltue4-net472
+
+    - name: Zip .NET Core 2.0 artifacts
+      run: zip -r FetchPrebuiltUE4-DotNetCore2.0-${{ GITHUB_REF#refs/tags/releases/ }}.zip fetchprebuiltue4-netcoreapp2.0
+
+    - name: Zip .NET Framework 4.7.2 artifacts
+      run: zip -r FetchPrebuiltUE4-DotNet4.7.2-${{ GITHUB_REF#refs/tags/releases/ }}.zip fetchprebuiltue4-net472
+
+    - name: Create GitHub release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ GITHUB_REF#refs/tags/releases/ }}
+          draft: false
+          # TODO: declare a body with changenotes for the release
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          artifacts: "FetchPrebuiltUE4-DotNetCore2.0-${{ GITHUB_REF#refs/tags/releases/ }}.zip,FetchPrebuiltUE4-DotNet4.7.2-${{ GITHUB_REF#refs/tags/releases/ }}.zip"
