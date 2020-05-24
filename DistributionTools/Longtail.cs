@@ -96,22 +96,22 @@ namespace DistributionTools
 
         public static async Task<bool> UpsyncToGSBucket(GoogleOAuthFlow.ApplicationDefaultCredentialsFile applicationDefaultCredentialsFile, BlockStorageURI blockStorageURI, string localPath, VersionIndexURI versionIndexURI)
         {
-            return await RunLongtailCommand(applicationDefaultCredentialsFile, new string[] { "upsync", "--source-path", localPath, "--target-path", (string)versionIndexURI, "--storage-uri", (string)blockStorageURI });
+            return await RunLongtailCommand(applicationDefaultCredentialsFile, new string[] { "upsync", "--source-path", $"\"{localPath}\"", "--target-path", $"\"{(string)versionIndexURI}\"", "--storage-uri", $"\"{(string)blockStorageURI}\"" });
         }
 
         public static async Task<bool> DownsyncFromGSBucket(GoogleOAuthFlow.ApplicationDefaultCredentialsFile applicationDefaultCredentialsFile, BlockStorageURI blockStorageURI, string localPath, VersionIndexURI versionIndexURI)
         {
-            return await RunLongtailCommand(applicationDefaultCredentialsFile, new string[] { "downsync", "--source-path", (string)versionIndexURI, "--target-path", localPath, "--storage-uri", (string)blockStorageURI });
+            return await RunLongtailCommand(applicationDefaultCredentialsFile, new string[] { "downsync", "--source-path", $"\"{(string)versionIndexURI}\"", "--target-path", $"\"{localPath}\"", "--storage-uri", $"\"{(string)blockStorageURI}\"" });
         }
 
         public static async Task<bool> UpsyncToLocalStore(BlockStorageURI blockStorageURI, string localPath, VersionIndexURI versionIndexURI)
         {
-            return await RunLongtailCommand(null, new string[] { "upsync", "--source-path", localPath, "--target-path", (string)versionIndexURI, "--storage-uri", (string)blockStorageURI });
+            return await RunLongtailCommand(null, new string[] { "upsync", "--source-path", $"\"{localPath}\"", "--target-path", $"\"{(string)versionIndexURI}\"", "--storage-uri", $"\"{(string)blockStorageURI}\"" });
         }
 
         public static async Task<bool> DownsyncFromLocalStore(BlockStorageURI blockStorageURI, string localPath, VersionIndexURI versionIndexURI)
         {
-            return await RunLongtailCommand(null, new string[] { "downsync", "--source-path", (string)versionIndexURI, "--target-path", localPath, "--storage-uri", (string)blockStorageURI });
+            return await RunLongtailCommand(null, new string[] { "downsync", "--source-path", $"\"{(string)versionIndexURI}\"", "--target-path", $"\"{localPath}\"", "--storage-uri", $"\"{(string)blockStorageURI}\"" });
         }
     }
 }
