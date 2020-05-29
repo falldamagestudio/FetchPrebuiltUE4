@@ -70,6 +70,10 @@ namespace FetchPrebuiltUE4Lib
             updateLocalUE4Version.Handler = CommandHandler.Create(UpdateLocalUE4Version);
             rootCommand.Add(updateLocalUE4Version);
 
+            Command runPrerequisitesInstaller = new Command("run-prerequisites-installer");
+            runPrerequisitesInstaller.Handler = CommandHandler.Create(RunPrerequisitesInstaller);
+            rootCommand.Add(runPrerequisitesInstaller);
+
             Command clearAuth = new Command("clear-auth");
             clearAuth.Handler = CommandHandler.Create(ClearAuth);
             rootCommand.Add(clearAuth);
@@ -202,15 +206,17 @@ namespace FetchPrebuiltUE4Lib
 
                 int result = await DownsyncWithAuthentication(config, applicationOAuthConfiguration, Path.GetFullPath(config.UE4Folder), desiredUE4Version.BuildId);
 
-                if (result == 0)
+                if (result != 0)
                 {
-                    WriteUE4Version(desiredUE4Version, installedUE4VersionFile);
-                    Console.WriteLine($"UE4 version {desiredUE4Version.BuildId} has been installed");
-                    return 0;
+                    Console.WriteLine("Download failed.");
+                    return result;
                 }
                 else
                 {
-                    Console.WriteLine("Download failed.");
+                    WriteUE4Version(desiredUE4Version, installedUE4VersionFile);
+                    Console.WriteLine($"UE4 version {desiredUE4Version.BuildId} has been downloaded");
+
+                    result = await Prerequisites.RunPrerequisitesInstaller(config.UE4Folder);
                     return result;
                 }
             }
@@ -219,6 +225,13 @@ namespace FetchPrebuiltUE4Lib
                 Console.WriteLine($"UE4 version {desiredUE4Version.BuildId} is already installed");
                 return 0;
             }
+        }
+
+        private static async Task<int> RunPrerequisitesInstaller()
+        {
+            Initialize(out Config config, out GoogleOAuthFlow.ApplicationOAuthConfiguration applicationOAuthConfiguration);
+            int result = await Prerequisites.RunPrerequisitesInstaller(config.UE4Folder);
+            return result;
         }
 
         private static void ClearAuth()
